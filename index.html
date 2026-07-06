@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pfSense Segmented Firewall Live Lab</title>
+  <link rel="stylesheet" href="live-dashboard.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">VirtualBox Security Lab</p>
+        <h1>pfSense Segmented Firewall Live Lab</h1>
+        <p class="lead">A hands-on WAN, DMZ, Internal, and Restricted zone project with live evidence tracking, policy simulation, and report-ready validation.</p>
+      </div>
+      <div class="status-panel" aria-label="Live project status">
+        <span class="status-dot" id="statusDot" aria-hidden="true"></span>
+        <strong id="completionText">0% complete</strong>
+        <span id="liveClock">Loading time...</span>
+      </div>
+    </header>
+
+    <section class="hero-grid" aria-label="Lab overview">
+      <article class="topology-card">
+        <div class="section-title">
+          <h2>Live Topology</h2>
+          <a href="topology.html">Open screenshot diagram</a>
+        </div>
+
+        <div class="topology" role="img" aria-label="pfSense topology with four security zones">
+          <div class="zone zone-wan" data-zone="WAN">
+            <span>WAN</span>
+            <strong>Internet / NAT</strong>
+            <small>pfSense em0</small>
+          </div>
+
+          <div class="firewall" data-zone="pfSense">
+            <span>pfSense</span>
+            <strong>Firewall Router</strong>
+            <small>em0, em1, em2, em3</small>
+          </div>
+
+          <div class="zone-stack">
+            <div class="zone zone-dmz" data-zone="DMZ">
+              <span>DMZ</span>
+              <strong>Web Server</strong>
+              <small>192.168.10.10</small>
+            </div>
+            <div class="zone zone-internal" data-zone="Internal">
+              <span>Internal</span>
+              <strong>Employee PC</strong>
+              <small>192.168.20.10</small>
+            </div>
+            <div class="zone zone-restricted" data-zone="Restricted">
+              <span>Restricted</span>
+              <strong>HR / Finance PC</strong>
+              <small>192.168.30.10</small>
+            </div>
+          </div>
+
+          <svg class="links" viewBox="0 0 900 360" aria-hidden="true">
+            <path id="flowWan" d="M180 180 C250 180, 285 180, 350 180"></path>
+            <path id="flowDmz" d="M530 145 C590 85, 635 75, 710 72"></path>
+            <path id="flowInternal" d="M530 180 C600 180, 630 180, 710 180"></path>
+            <path id="flowRestricted" d="M530 215 C590 275, 635 285, 710 288"></path>
+          </svg>
+        </div>
+
+        <div class="policy-strip">
+          <span><strong>Allow</strong> WAN to DMZ TCP 80/443</span>
+          <span><strong>Allow</strong> Internal to DMZ TCP 80/443</span>
+          <span><strong>Allow</strong> Internal to Restricted TCP 22</span>
+          <span><strong>Deny</strong> everything else by default</span>
+        </div>
+      </article>
+
+      <aside class="control-card">
+        <div class="section-title">
+          <h2>Traffic Simulator</h2>
+          <button class="ghost" id="clearLogs" type="button">Clear Logs</button>
+        </div>
+        <p class="hint">This simulates your firewall policy logic. Use the real VM commands in the validation plan for final evidence.</p>
+
+        <div class="sim-controls">
+          <label>
+            Source
+            <select id="sourceZone">
+              <option>WAN</option>
+              <option>DMZ</option>
+              <option selected>Internal</option>
+              <option>Restricted</option>
+            </select>
+          </label>
+          <label>
+            Destination
+            <select id="destZone">
+              <option>WAN</option>
+              <option selected>DMZ</option>
+              <option>Internal</option>
+              <option>Restricted</option>
+            </select>
+          </label>
+          <label>
+            Service
+            <select id="servicePort">
+              <option value="80">HTTP 80</option>
+              <option value="443">HTTPS 443</option>
+              <option value="22">SSH 22</option>
+              <option value="icmp">ICMP ping</option>
+              <option value="any">Any other</option>
+            </select>
+          </label>
+          <button id="runTraffic" type="button">Run Test Flow</button>
+        </div>
+
+        <div class="decision" id="decisionBox">
+          <span>Waiting for flow</span>
+          <strong>Select traffic and run a test.</strong>
+        </div>
+      </aside>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel">
+        <div class="section-title">
+          <h2>Validation Checklist</h2>
+          <button class="ghost" id="resetChecklist" type="button">Reset</button>
+        </div>
+        <div class="checklist" id="checklist"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-title">
+          <h2>Live Firewall Log</h2>
+          <span class="mini-label">Demo policy log</span>
+        </div>
+        <div class="log-table" id="logTable" aria-live="polite"></div>
+      </article>
+    </section>
+
+    <section class="dashboard-grid evidence-area">
+      <article class="panel">
+        <div class="section-title">
+          <h2>Real Evidence Slots</h2>
+          <span class="mini-label">Local preview only</span>
+        </div>
+        <p class="hint">Attach screenshots from your actual pfSense and VM tests. The page previews them locally in your browser; it does not upload anything.</p>
+        <div class="evidence-grid" id="evidenceGrid"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-title">
+          <h2>Project Documents</h2>
+          <span class="mini-label">Submission ready</span>
+        </div>
+        <div class="doc-list">
+          <a href="quick-start.md"><strong>Quick Start</strong><span>Fast build path.</span></a>
+          <a href="README.md"><strong>Main README</strong><span>Full project guide.</span></a>
+          <a href="pfSense-gui-steps.md"><strong>pfSense GUI Steps</strong><span>Click-by-click configuration.</span></a>
+          <a href="linux-vm-commands.md"><strong>Linux VM Commands</strong><span>Static IP, Apache, SSH, tests.</span></a>
+          <a href="validation-plan.md"><strong>Validation Plan</strong><span>Commands and expected results.</span></a>
+          <a href="final-report-template.md"><strong>Final Report Template</strong><span>Fill with screenshots.</span></a>
+          <a href="resume-interview-notes.md"><strong>Resume Notes</strong><span>Interview-ready explanation.</span></a>
+          <a href="troubleshooting.md"><strong>Troubleshooting</strong><span>Fix common lab issues.</span></a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="live-dashboard.js"></script>
+</body>
+</html>

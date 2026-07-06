@@ -1,0 +1,11 @@
+Rule,Interface,Source Zone,Destination Zone,Destination,Port/Protocol,Action,Implementation Notes
+1,WAN,WAN,DMZ,192.168.10.10,"TCP 80,443",Allow,"Add pass rule on WAN or use NAT port forward with associated rule"
+2,WAN,WAN,"Internal/Restricted","192.168.20.0/24, 192.168.30.0/24",Any,Deny,"Default deny; screenshot logs or explicit deny if required"
+3,Internal,Internal,DMZ,192.168.10.10,"TCP 80,443",Allow,"Add pass rule on Internal interface"
+4,Internal,Internal,Restricted,192.168.30.0/24,TCP 22,Allow,"Add pass rule on Internal interface"
+5,Internal,Internal,Restricted,192.168.30.0/24,Any other,Deny,"Default deny after rule 4"
+6,DMZ,DMZ,Internal,192.168.20.0/24,Any,Deny,"Default deny"
+7,DMZ,DMZ,Restricted,192.168.30.0/24,Any,Deny,"Default deny"
+8,Restricted,Restricted,WAN,Any,Any,Deny,"Default deny"
+9,Restricted,Restricted,Internal,192.168.20.0/24,Any,Deny,"Default deny"
+10,Restricted,Restricted,DMZ,192.168.10.0/24,Any,Deny,"Default deny"

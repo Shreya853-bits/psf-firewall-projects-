@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>pfSense VirtualBox Network Topology</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #627089;
+      --line: #90a4bd;
+      --wan: #e9f1ff;
+      --dmz: #fff1d8;
+      --lan: #e8f7ee;
+      --res: #f7e8ee;
+      --pfs: #edf0f5;
+      --bg: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .diagram {
+      width: 100%;
+      min-height: 580px;
+      background: #ffffff;
+      border: 1px solid #d8e0eb;
+      border-radius: 8px;
+      padding: 26px;
+      box-shadow: 0 10px 28px rgba(23, 32, 51, 0.08);
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .node rect {
+      stroke: #53657d;
+      stroke-width: 1.5;
+      rx: 8;
+    }
+
+    .node text {
+      font-size: 15px;
+      fill: var(--ink);
+    }
+
+    .node .title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .node .small {
+      font-size: 13px;
+      fill: var(--muted);
+    }
+
+    .link {
+      stroke: var(--line);
+      stroke-width: 3;
+      fill: none;
+    }
+
+    .label {
+      fill: #ffffff;
+      stroke: #d8e0eb;
+      stroke-width: 1;
+      rx: 6;
+    }
+
+    .label-text {
+      font-size: 13px;
+      fill: var(--ink);
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .legend div {
+      background: #ffffff;
+      border: 1px solid #d8e0eb;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .legend strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 16px;
+      }
+
+      .diagram {
+        padding: 12px;
+        overflow-x: auto;
+      }
+
+      svg {
+        min-width: 920px;
+      }
+
+      .legend {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>pfSense VirtualBox Network Topology</h1>
+    <p class="subtitle">Four-zone segmented lab: WAN, DMZ, Internal LAN, and Restricted HR/Finance network.</p>
+
+    <section class="diagram" aria-label="Network topology diagram">
+      <svg viewBox="0 0 1120 560" role="img" aria-labelledby="diagramTitle diagramDesc">
+        <title id="diagramTitle">pfSense VirtualBox Network Topology</title>
+        <desc id="diagramDesc">pfSense connects WAN NAT, DMZ, Internal, and Restricted networks using four virtual adapters.</desc>
+
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#90a4bd"></path>
+          </marker>
+        </defs>
+
+        <path class="link" d="M270 280 H405" marker-end="url(#arrow)"></path>
+        <path class="link" d="M600 180 H760" marker-end="url(#arrow)"></path>
+        <path class="link" d="M600 280 H760" marker-end="url(#arrow)"></path>
+        <path class="link" d="M600 380 H760" marker-end="url(#arrow)"></path>
+
+        <g class="node">
+          <rect x="40" y="210" width="230" height="140" fill="var(--wan)"></rect>
+          <text class="title" x="66" y="246">WAN / Internet</text>
+          <text x="66" y="276">VirtualBox NAT</text>
+          <text class="small" x="66" y="304">Example: 10.0.2.0/24</text>
+          <text class="small" x="66" y="328">pfSense WAN IP by NAT</text>
+        </g>
+
+        <g class="node">
+          <rect x="405" y="180" width="195" height="220" fill="var(--pfs)"></rect>
+          <text class="title" x="448" y="220">pfSense VM</text>
+          <text x="438" y="254">em0: WAN</text>
+          <text x="438" y="284">em1: DMZ</text>
+          <text x="438" y="314">em2: Internal</text>
+          <text x="438" y="344">em3: Restricted</text>
+          <text class="small" x="438" y="374">Firewall / Router</text>
+        </g>
+
+        <g class="node">
+          <rect x="760" y="110" width="300" height="120" fill="var(--dmz)"></rect>
+          <text class="title" x="790" y="146">DMZ Web Server</text>
+          <text x="790" y="176">Ubuntu Server + Apache</text>
+          <text class="small" x="790" y="204">192.168.10.10/24, GW 192.168.10.1</text>
+        </g>
+
+        <g class="node">
+          <rect x="760" y="250" width="300" height="120" fill="var(--lan)"></rect>
+          <text class="title" x="790" y="286">Internal Employee PC</text>
+          <text x="790" y="316">Kali or Ubuntu</text>
+          <text class="small" x="790" y="344">192.168.20.10/24, GW 192.168.20.1</text>
+        </g>
+
+        <g class="node">
+          <rect x="760" y="390" width="300" height="120" fill="var(--res)"></rect>
+          <text class="title" x="790" y="426">Restricted HR/Finance PC</text>
+          <text x="790" y="456">Kali or Ubuntu</text>
+          <text class="small" x="790" y="484">192.168.30.10/24, GW 192.168.30.1</text>
+        </g>
+
+        <rect class="label" x="300" y="246" width="92" height="68"></rect>
+        <text class="label-text" x="318" y="271">em0</text>
+        <text class="label-text" x="318" y="294">WAN</text>
+
+        <rect class="label" x="620" y="138" width="118" height="64"></rect>
+        <text class="label-text" x="638" y="162">em1 / OPT1</text>
+        <text class="label-text" x="638" y="184">dmz_net</text>
+
+        <rect class="label" x="620" y="248" width="118" height="64"></rect>
+        <text class="label-text" x="638" y="272">em2 / OPT2</text>
+        <text class="label-text" x="638" y="294">lan_net</text>
+
+        <rect class="label" x="620" y="358" width="130" height="64"></rect>
+        <text class="label-text" x="638" y="382">em3 / OPT3</text>
+        <text class="label-text" x="638" y="404">restricted_net</text>
+      </svg>
+    </section>
+
+    <section class="legend" aria-label="Firewall policy summary">
+      <div><strong>WAN to DMZ</strong>Allow TCP 80 and 443 to 192.168.10.10.</div>
+      <div><strong>Internal to DMZ</strong>Allow TCP 80 and 443 to 192.168.10.10.</div>
+      <div><strong>Internal to Restricted</strong>Allow TCP 22 only.</div>
+      <div><strong>Everything Else</strong>Blocked by pfSense default deny or explicit logged deny rules.</div>
+    </section>
+  </main>
+</body>
+</html>

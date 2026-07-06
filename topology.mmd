@@ -1,0 +1,11 @@
+flowchart LR
+    Internet["Internet / Host NAT<br/>VirtualBox NAT<br/>10.0.2.0/24 example"]
+    PFS["pfSense VM<br/>4 virtual adapters"]
+    DMZ["DMZ Server<br/>Ubuntu Server<br/>192.168.10.10<br/>Apache/Nginx"]
+    LAN["Internal Employee PC<br/>Kali or Ubuntu<br/>192.168.20.10"]
+    RES["Restricted HR/Finance PC<br/>Kali or Ubuntu<br/>192.168.30.10"]
+
+    Internet ---|"em0 / WAN<br/>IP assigned by NAT"| PFS
+    PFS ---|"em1 / OPT1<br/>192.168.10.1/24<br/>dmz_net"| DMZ
+    PFS ---|"em2 / OPT2<br/>192.168.20.1/24<br/>lan_net"| LAN
+    PFS ---|"em3 / OPT3<br/>192.168.30.1/24<br/>restricted_net"| RES
